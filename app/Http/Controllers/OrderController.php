@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderUpdated;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -66,6 +69,12 @@ class OrderController extends Controller
         $order->total = $total * (100 - $order->discount);
         $order->save();
 
+        $user = Auth::user();
+        Mail::to($order->shopper()->email)->send(
+            new OrderUpdated($order),
+            $user->email
+        );
+
         return $order;
     }
 
@@ -75,6 +84,12 @@ class OrderController extends Controller
         $order->status = Order::STATUS_DELIVERED;
 
         $order->save();
+
+        $user = Auth::user();
+        Mail::to($order->shopper()->email)->send(
+            new OrderUpdated($order),
+            $user->email
+        );
 
         return $order;
     }
@@ -86,6 +101,12 @@ class OrderController extends Controller
 
         $order->save();
 
+        $user = Auth::user();
+        Mail::to($order->shopper()->email)->send(
+            new OrderUpdated($order),
+            $user->email
+        );
+
         return $order;
     }
 
@@ -95,6 +116,12 @@ class OrderController extends Controller
         $order->status = Order::STATUS_DECLINED;
 
         $order->save();
+
+        $user = Auth::user();
+        Mail::to($order->shopper()->email)->send(
+            new OrderUpdated($order),
+            $user->email
+        );
 
         return $order;
 
